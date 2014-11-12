@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '0.0.0'
+version = '0.0.1.dev'
 
 setup(name='tileglue',
       version=version,
@@ -19,7 +19,9 @@ setup(name='tileglue',
       include_package_data=True,
       zip_safe=False,
       install_requires=[
-          # -*- Extra requirements: -*-
+          'redis',
+          'tilequeue',
+          'tilestache-providers',
       ],
       entry_points="""
       # -*- Entry points: -*-
