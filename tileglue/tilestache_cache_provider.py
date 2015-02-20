@@ -2,6 +2,9 @@ from mapzen.cache import Notifier
 from mapzen.cache import S3
 from redis import StrictRedis
 from tilequeue.cache import RedisCacheIndex
+from tilequeue.tile import serialize_coord
+import sys
+import traceback
 
 
 class OnCacheSave(object):
@@ -14,7 +17,13 @@ class OnCacheSave(object):
         # in case more are needed later
         coord = data.get('coord')
         assert coord is not None, 'Missing coord in on save cache notification'
-        self.redis_cache_index.index_coord(coord)
+        try:
+            self.redis_cache_index.index_coord(coord)
+        except:
+            print >> sys.stderr, \
+                'Error adding to tiles of interest: %s' % \
+                serialize_coord(coord)
+            traceback.print_exc(file=sys.stderr)
 
 
 def make_redis_client(host, port, db):
