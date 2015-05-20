@@ -17,12 +17,13 @@ class OnCacheSave(object):
         # in case more are needed later
         coord = data.get('coord')
         assert coord is not None, 'Missing coord in on save cache notification'
+        coord_str = serialize_coord(coord)
         try:
             self.redis_cache_index.index_coord(coord)
+            print 'Added to tiles of interest: %s' % coord_str
         except:
             print >> sys.stderr, \
-                'Error adding to tiles of interest: %s' % \
-                serialize_coord(coord)
+                'Error adding to tiles of interest: %s' % coord_str
             traceback.print_exc(file=sys.stderr)
 
 
