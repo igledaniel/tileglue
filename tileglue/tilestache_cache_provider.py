@@ -12,11 +12,7 @@ class OnCacheSave(object):
     def __init__(self, redis_cache_index):
         self.redis_cache_index = redis_cache_index
 
-    def __call__(self, data):
-        # cache_data has keys: body, layer, coord, format
-        # in case more are needed later
-        coord = data.get('coord')
-        assert coord is not None, 'Missing coord in on save cache notification'
+    def _add_to_tiles_of_interest(self, coord):
         coord_str = serialize_coord(coord)
         try:
             self.redis_cache_index.index_coord(coord)
@@ -25,6 +21,16 @@ class OnCacheSave(object):
             print >> sys.stderr, \
                 'Error adding to tiles of interest: %s' % coord_str
             traceback.print_exc(file=sys.stderr)
+
+    def __call__(self, data):
+        # cache_data has keys: body, layer, coord, format
+        # in case more are needed later
+        coord = data.get('coord')
+        assert coord is not None, 'Missing coord in on save cache notification'
+        self._add_to_tiles_of_interest(coord)
+        if coord.zoom > 18:
+            coord_at_z18 = coord.zoomTo(18)
+            self._add_to_tiles_of_interest(coord_at_z18)
 
 
 def make_redis_client(host, port, db):
