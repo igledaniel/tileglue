@@ -44,7 +44,7 @@ def make_tilestache_s3_cache(
         bucket=None, access=None, secret=None, use_locks=False, path='',
         reduced_redundancy=True, gzip_formats=None,
         redis_host=None, redis_port=6379, redis_db=0,
-        redis_cache_set_key='tilestache.cache'):
+        redis_cache_set_key='tilequeue.tiles-of-interest'):
 
     s3_cache = S3(bucket, access, secret, use_locks, path, reduced_redundancy,
                   gzip_formats)
