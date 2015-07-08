@@ -1,3 +1,4 @@
+from mapzen.cache import Filesystem
 from mapzen.cache import Notifier
 from mapzen.cache import S3
 from redis import StrictRedis
@@ -54,5 +55,18 @@ def make_tilestache_s3_cache(
     redis_cache_index = RedisCacheIndex(redis_client, redis_cache_set_key)
     on_save = OnCacheSave(redis_cache_index)
     notifying_cache = Notifier(s3_cache, on_save)
+
+    return notifying_cache
+
+
+def make_tilestache_filesystem_cache(
+        basepath=None, redis_host=None, redis_port=6379, redis_db=0,
+        redis_cache_set_key='tilequeue.tiles-of-interest'):
+    filesystem_cache = Filesystem(basepath)
+    redis_client = make_redis_client(redis_host, redis_port, redis_db)
+
+    redis_cache_index = RedisCacheIndex(redis_client, redis_cache_set_key)
+    on_save = OnCacheSave(redis_cache_index)
+    notifying_cache = Notifier(filesystem_cache, on_save)
 
     return notifying_cache
